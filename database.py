@@ -7,7 +7,7 @@ load_dotenv()
 
 password = urllib.parse.quote_plus(os.getenv("DB_PASSWD"))
 engine = create_engine(
-    f"mysql+pymysql://root:{password}@192.168.1.7/website?charset=utf8mb4"
+    f"mysql+pymysql://root:{password}@192.168.29.28/website?charset=utf8mb4"
 )
 
 def insert_user(name, email):
