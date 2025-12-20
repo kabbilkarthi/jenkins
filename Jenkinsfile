@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'docker' }
+    agent { label 'controller' }
 
     stages {
         stage('Run script') {
