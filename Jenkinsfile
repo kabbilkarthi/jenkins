@@ -11,7 +11,7 @@ pipeline {
                     # Your Linux scripting here
                     df -h
                     free -m
-                    du -ahd1 /
+                    du -ahd1 /tmp
                 '''
             }
         }
