@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'controller' }
+    agent { label 'docker' }
 
     stages {
         stage('Run script') {
@@ -11,6 +11,7 @@ pipeline {
                     # Your Linux scripting here
                     df -h
                     free -m
+                    du -ahd1 /
                 '''
             }
         }
