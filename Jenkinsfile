@@ -18,7 +18,7 @@ pipeline {
                     whoami
                     df -h
                     free -m
-                    sudo du -ahd1 /tmp
+                    sudo du -ahd1 /
                 '''
             }
         }
