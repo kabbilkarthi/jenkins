@@ -1,14 +1,14 @@
 pipeline {
-    agent { label 'docker' }
+    agent { label 'controller' }
 
     stages {
-        stage('Confirm run') {
-            steps {
-                script {
-                    input message: 'Continue to next stage?'
-                }
-            }
-        }
+        // stage('Confirm run') {
+        //     steps {
+        //         script {
+        //             input message: 'Continue to next stage?'
+        //         }
+        //     }
+        // }
 
         stage('Run script') {
             steps {
@@ -18,7 +18,7 @@ pipeline {
                     whoami
                     df -h
                     free -m
-                    du -ahd1 /tmp
+                    sudo du -ahd1 /tmp
                 '''
             }
         }
