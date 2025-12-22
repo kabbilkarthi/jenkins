@@ -15,7 +15,7 @@ pipeline {
                 sh '''
                     echo "Running on: $(hostname -f)"
                     uname -a
-
+                    whoami
                     df -h
                     free -m
                     du -ahd1 /tmp
