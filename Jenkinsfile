@@ -1,14 +1,21 @@
 pipeline {
-    agent { label 'docker' }
+    agent { label 'controller' }
 
     stages {
+        stage('Confirm run') {
+            steps {
+                script {
+                    input message: 'Continue to next stage?'
+                }
+            }
+        }
+
         stage('Run script') {
             steps {
                 sh '''
                     echo "Running on: $(hostname -f)"
                     uname -a
 
-                    # Your Linux scripting here
                     df -h
                     free -m
                     du -ahd1 /tmp
