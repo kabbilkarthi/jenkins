@@ -1,0 +1,24 @@
+---
+- name: Configure localhost using ansible-pull
+  hosts: localhost
+  connection: local
+  become: yes
+  gather_facts: yes
+
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+    - name: Setup MySQL server
+      include_role:
+        name: mysql_server
+      when: install_mysql | bool
+      tags:
+        - mysql
+
+    - name: Setup Docker server
+      include_role:
+        name: docker_server
+      when: install_docker | bool
+      tags:
+        - docker

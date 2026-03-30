@@ -1,0 +1,68 @@
+---
+- name: Ensure this role runs only on RedHat family
+  fail:
+    msg: "This role supports only RHEL-family systems."
+  when: ansible_os_family != "RedHat"
+
+- name: Remove old/conflicting Docker packages
+  dnf:
+    name:
+      - docker
+      - docker-client
+      - docker-client-latest
+      - docker-common
+      - docker-latest
+      - docker-latest-logrotate
+      - docker-logrotate
+      - docker-engine
+      - podman
+      - runc
+    state: absent
+
+- name: Install yum-utils
+  dnf:
+    name: yum-utils
+    state: present
+
+- name: Add Docker CE repository
+  command: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  args:
+    creates: /etc/yum.repos.d/docker-ce.repo
+
+- name: Refresh dnf cache
+  dnf:
+    update_cache: yes
+
+- name: Install Docker packages
+  dnf:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+
+- name: Ensure docker group exists
+  group:
+    name: docker
+    state: present
+
+- name: Add users to docker group
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: yes
+  loop: "{{ docker_users }}"
+  when: docker_users | length > 0
+
+- name: Ensure docker service is enabled and started
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Verify docker version
+  command: docker --version
+  register: docker_version
+  changed_when: false
