@@ -5,7 +5,7 @@ install_docker: false
 set_hostname: true
 set_hosts_file: true
 
-host_name: "{{ name | default('localhost') }}"
+host_name: "{{ vm_name | default('localhost') }}"
 host_domain: "lab.example.com"
 host_fqdn: "{{ host_name }}.{{ host_domain }}"
 host_ip: "{{ ansible_ens160.ipv4.address | default('127.0.0.1') }}"
