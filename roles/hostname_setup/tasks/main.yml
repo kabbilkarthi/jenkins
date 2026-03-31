@@ -2,6 +2,15 @@
 - name: Set system hostname
   hostname:
     name: "{{ host_fqdn }}"
+  when: 
+    - set_hostname | bool
+    - ansible_virtualization_type != "chroot"
+
+- name: Write hostname to /etc/hostname directly
+  copy:
+    content: "{{ host_fqdn }}\n"
+    dest: /etc/hostname
+    mode: '0644'
   when: set_hostname | bool
 
 - name: Ensure localhost entry exists
