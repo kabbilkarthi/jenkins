@@ -6,7 +6,7 @@
     mode: '0700'
 
 - name: Add authorized keys for root
-  authorized_key:
+  ansible.posix.authorized_key:
     user: root
     key: "{{ item }}"
     state: present
