@@ -8,7 +8,7 @@ set_hosts_file: true
 host_name: "{{ name | default('localhost') }}"
 host_domain: "lab.example.com"
 host_fqdn: "{{ host_name }}.{{ host_domain }}"
-host_ip: "{{ ansible_default_ipv4.address | default('127.0.0.1') }}"
+host_ip: "{{ ansible_ens160.ipv4.address | default('127.0.0.1') }}"
 
 mysql_root_password: "Kabbil123!"
 mysql_bind_address: "0.0.0.0"
