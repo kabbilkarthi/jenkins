@@ -2,9 +2,20 @@
 install_mysql: false
 install_docker: false
 
+set_hostname: true
+set_hosts_file: true
+
+host_name: "{{ name | default('localhost') }}"
+host_domain: "lab.example.com"
+host_fqdn: "{{ host_name }}.{{ host_domain }}"
+host_ip: "{{ ansible_default_ipv4.address | default('127.0.0.1') }}"
+
 mysql_root_password: "Kabbil123!"
 mysql_bind_address: "0.0.0.0"
 mysql_port: 3306
+
+ssh_public_keys:
+  - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC7K646g3vk1NJNRASppA8tt55URq3WV8j+Cu0rp6Tp42sShoIksuCGOqt07wqyxyLgPyPg8Djvn1HnR4DYYIaw4ifhkpFW5DEqZNh+2qw8bEetavrzdYbfNKUsY3RDnUhA4YaicU+bCUC4JX9qeKj+BCVkteA8h6vdW5lZtGoTSigBEBQxuvBCwU5Oog3ereQvFQ4a2W2UtZwXH4/iWfil1JQWK6//+gjSYZ823xZNazrUNctrraFjZcTpNgDGW//dUDymmTz2bSSfPkvcAoMYM/N8cJeP6xJYzeoh4UrxpzRfflyGhzHrSiL1YkaxfQqfjmwnZ7vXOG+QbQv/QzhU943DFJ2R/d793OEmYSiettfoh+K626PqmaiUSmiWBi0UtNbSe/m4jnMzRnaL9IwVaWc0dnYEGRkqYCpplU92qdsZTJBqDFm1ZHasm9hQuhaTad5f0V+ZzrHx9+3wZ4n3iKoBVdY3W9ojF4ugHwxEGzMgIODY3avqmt2R36x8+SM= root@vm1.lab.example.com"
 
 # keep only local/internal repos for mysql
 mysql_enabled_repos:

@@ -9,6 +9,13 @@
     - vars/main.yml
 
   tasks:
+
+    - name: Setup hostname
+      include_role:
+        name: hostname_setup
+    - name: setup ssh keys
+      include_role:
+        name: ssh_setup
     - name: Setup MySQL server
       include_role:
         name: mysql_server

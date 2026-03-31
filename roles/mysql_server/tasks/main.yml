@@ -53,9 +53,8 @@
 
 - name: Set MySQL root password on first install
   shell: >
-    mysql --connect-expired-password -uroot -p'{{ mysql_temp_password.stdout }}'
-    -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';"
+    mysql -uroot
+    -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}'; FLUSH PRIVILEGES;"
   when:
     - mysql_root_check.rc != 0
-    - mysql_temp_password.stdout | length > 0
-  no_log: true
+    - mysql_root_nopass_check.rc == 0

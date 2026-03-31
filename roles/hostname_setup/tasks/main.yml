@@ -1,0 +1,21 @@
+---
+- name: Set system hostname
+  hostname:
+    name: "{{ host_fqdn }}"
+  when: set_hostname | bool
+
+- name: Ensure localhost entry exists
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^127\.0\.0\.1\s+'
+    line: "127.0.0.1 localhost localhost.localdomain"
+    state: present
+  when: set_hosts_file | bool
+
+- name: Add current host entry to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: '.*{{ host_fqdn }}.*'
+    line: "{{ host_ip }} {{ host_fqdn }} {{ host_name }}"
+    state: present
+  when: set_hosts_file | bool
