@@ -4,23 +4,17 @@
     msg: "This role supports only RHEL-family systems."
   when: ansible_os_family != "RedHat"
 
-- name: Refresh dnf cache
-  dnf:
-    update_cache: yes
-
-- name: Enable mysql 8.0 module on RHEL 8
-  command: dnf module enable mysql:8.0 -y
-  when: ansible_distribution_major_version | int == 8
-  register: mysql_module_enable
-  changed_when: "'Nothing to do' not in (mysql_module_enable.stdout | default(''))"
-  failed_when: false
-
-- name: Install MySQL server from local repos only
+- name: Install MySQL server from local repos only on RHEL 8
   dnf:
     name: mysql-server
     state: present
-    disablerepo: "*"
-    enablerepo: "{{ mysql_enabled_repos }}"
+    when: ansible_distribution_major_version | int == 8
+
+- name: Install MySQL server on RHEL 10
+  dnf:
+    name: mysql8.4-server
+    state: present
+  when: ansible_distribution_major_version | int == 10
 
 - name: Ensure mysqld service is enabled and started
   service:
@@ -37,24 +31,3 @@
       bind-address = {{ mysql_bind_address }}
       port = {{ mysql_port }}
   notify: restart mysqld
-
-- name: Get temporary MySQL root password
-  shell: "grep 'temporary password' /var/log/mysqld.log | tail -1 | awk '{print $NF}'"
-  register: mysql_temp_password
-  changed_when: false
-  failed_when: false
-
-- name: Check if desired MySQL root password already works
-  shell: mysqladmin -uroot -p'{{ mysql_root_password }}' ping
-  register: mysql_root_check
-  changed_when: false
-  failed_when: false
-  no_log: true
-
-- name: Set MySQL root password on first install
-  shell: >
-    mysql -uroot
-    -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}'; FLUSH PRIVILEGES;"
-  when:
-    - mysql_root_check.rc != 0
-    - mysql_root_nopass_check.rc == 0
