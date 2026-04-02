@@ -22,7 +22,7 @@
     ipv4.method auto
     ipv4.never-default yes
     ipv4.ignore-auto-dns no
-    ipv4.dns "{{ ipv4.ignore-auto-dns }}"
+    ipv4.dns "{{ lab_dns_server }}"
     ipv4.dns-search "{{ lab_search_domain }}"
     ipv6.method ignore
 
