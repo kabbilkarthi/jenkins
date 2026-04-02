@@ -4,6 +4,7 @@ install_docker: false
 
 set_hostname: true
 set_hosts_file: true
+set_network: true
 
 host_name: "{{ vm_name | default('localhost') }}"
 host_domain: "lab.example.com"
@@ -24,3 +25,13 @@ mysql_enabled_repos:
 
 docker_users:
   - kabbil
+
+hostonly_if: ens160
+nat_if: ens192
+
+lab_dns_servers:
+  - 192.168.139.10
+  - 8.8.8.8
+
+lab_search_domain: lab.example.com
+

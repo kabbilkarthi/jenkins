@@ -29,3 +29,9 @@
       when: install_docker | bool
       tags:
         - docker
+    - name: Setup network configuration
+      include_role:
+        name: network-manager
+      when: set_network | bool
+      tags:
+        - network

@@ -1,0 +1,93 @@
+---
+- name: Check existing NetworkManager connections
+  ansible.builtin.command: nmcli -t -f NAME connection show
+  register: nmcli_connections
+  changed_when: false
+
+# -----------------------------------
+# Host-only NIC (DHCP from VM1)
+# -----------------------------------
+- name: Create host-only connection if missing
+  ansible.builtin.command: >
+    nmcli connection add
+    type ethernet
+    ifname {{ hostonly_if }}
+    con-name {{ hostonly_if }}
+  when: hostonly_if not in nmcli_connections.stdout_lines
+
+- name: Configure host-only NIC (DHCP)
+  ansible.builtin.command: >
+    nmcli connection modify {{ hostonly_if }}
+    connection.autoconnect yes
+    ipv4.method auto
+    ipv4.never-default yes
+    ipv4.ignore-auto-dns no
+    ipv4.dns "{{ ipv4.ignore-auto-dns }}"
+    ipv4.dns-search "{{ lab_search_domain }}"
+    ipv6.method ignore
+
+# -----------------------------------
+# NAT NIC (default route)
+# -----------------------------------
+- name: Create NAT connection if missing
+  ansible.builtin.command: >
+    nmcli connection add
+    type ethernet
+    ifname {{ nat_if }}
+    con-name {{ nat_if }}
+  when: nat_if not in nmcli_connections.stdout_lines
+
+- name: Configure NAT NIC (internet)
+  ansible.builtin.command: >
+    nmcli connection modify {{ nat_if }}
+    connection.autoconnect yes
+    ipv4.method auto
+    ipv4.never-default no
+    ipv4.ignore-auto-dns yes
+    ipv4.dns ""
+    ipv4.dns-search ""
+    ipv6.method ignore
+
+# -----------------------------------
+# Apply changes
+# -----------------------------------
+- name: Bring up host-only NIC
+  ansible.builtin.command: nmcli connection up {{ hostonly_if }}
+  register: hostonly_up
+  changed_when: hostonly_up.rc == 0
+
+- name: Bring up NAT NIC
+  ansible.builtin.command: nmcli connection up {{ nat_if }}
+  register: nat_up
+  changed_when: nat_up.rc == 0
+
+# -----------------------------------
+# Debug (very useful in PXE labs)
+# -----------------------------------
+- name: Show device status
+  ansible.builtin.command: nmcli device status
+  register: nmcli_status
+  changed_when: false
+
+- name: Show IP addresses
+  ansible.builtin.command: ip -4 addr
+  register: ip_out
+  changed_when: false
+
+- name: Show route table
+  ansible.builtin.command: ip route
+  register: route_out
+  changed_when: false
+
+- name: Show DNS config
+  ansible.builtin.command: cat /etc/resolv.conf
+  register: dns_out
+  changed_when: false
+
+- name: Print final network state
+  ansible.builtin.debug:
+    msg:
+      - "{{ nmcli_status.stdout_lines }}"
+      - "{{ ip_out.stdout_lines }}"
+      - "{{ route_out.stdout_lines }}"
+      - "{{ dns_out.stdout_lines }}"
